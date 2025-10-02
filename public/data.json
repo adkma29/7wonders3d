@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "name": "Grande Muraille de Chine",
+    "country": "Chine",
+    "category": "New7Wonders",
+    "lat": 40.4319,
+    "lng": 116.5704,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg/1280px-The_Great_Wall_of_China_at_Jinshanling-edit.jpg",
+    "description": "Une série de fortifications militaires construites pour protéger la frontière nord de la Chine.",
+    "wikipedia": "https://fr.wikipedia.org/wiki/Grande_Muraille",
+    "googleMaps": "https://www.google.com/maps/place/Grande+Muraille+de+Chine/@40.431908,116.5683155,17z"
+  },
+  {
+    "id": 2,
+    "name": "Pétra",
+    "country": "Jordanie",
+    "category": "New7Wonders",
+    "lat": 30.3285,
+    "lng": 35.4444,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Treasury_petra_jordan7_2013.jpg/1024px-Treasury_petra_jordan7_2013.jpg",
+    "description": "Une cité antique nabatéenne célèbre pour ses structures taillées à même la roche.",
+    "wikipedia": "https://fr.wikipedia.org/wiki/P%C3%A9tra",
+    "googleMaps": "https://www.google.com/maps/place/P%C3%A9tra,+Jordanie/@30.328494,35.4422038,17z"
+  },
+  {
+    "id": 3,
+    "name": "Le Colisée",
+    "country": "Italie",
+    "category": "New7Wonders",
+    "lat": 41.8902,
+    "lng": 12.4922,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/1280px-Colosseo_2020.jpg",
+    "description": "Le plus grand amphithéâtre jamais construit dans l'Empire romain, situé au cœur de Rome.",
+    "wikipedia": "https://fr.wikipedia.org/wiki/Colis%C3%A9e",
+    "googleMaps": "https://www.google.com/maps/place/Colis%C3%A9e/@41.8902102,12.4900422,17z"
+  },
+  {
+    "id": 4,
+    "name": "Chichén Itzá",
+    "country": "Mexique",
+    "category": "New7Wonders",
+    "lat": 20.6843,
+    "lng": -88.5678,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Chichen-Itza-Castillo-Seen-From-East.JPG/1280px-Chichen-Itza-Castillo-Seen-From-East.JPG",
+    "description": "Un site archéologique maya précolombien, célèbre pour sa pyramide de Kukulcan.",
+    "wikipedia": "https://fr.wikipedia.org/wiki/Chich%C3%A9n_Itz%C3%A1",
+    "googleMaps": "https://www.google.com/maps/place/Chich%C3%A9n+Itz%C3%A1/@20.6842849,-88.5700271,17z"
+  },
+  {
+    "id": 5,
+    "name": "Machu Picchu",
+    "country": "Pérou",
+    "category": "New7Wonders",
+    "lat": -13.1631,
+    "lng": -72.5450,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/1280px-Machu_Picchu%2C_Peru.jpg",
+    "description": "Une ancienne cité inca du XVe siècle située dans les Andes péruviennes.",
+    "wikipedia": "https://fr.wikipedia.org/wiki/Machu_Picchu",
+    "googleMaps": "https://www.google.com/maps/place/Machu+Picchu/@-13.1631412,-72.5471516,17z"
+  },
+  {
+    "id": 6,
+    "name": "Christ Rédempteur",
+    "country": "Brésil",
+    "category": "New7Wonders",
+    "lat": -22.9519,
+    "lng": -43.2105,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Christ_the_Redeemer_viewed_from_Sugarloaf_Mountain_in_2022.jpg/1024px-Christ_the_Redeemer_viewed_from_Sugarloaf_Mountain_in_2022.jpg",
+    "description": "Une statue Art déco du Christ à Rio de Janeiro, surplombant la ville du haut du mont Corcovado.",
+    "wikipedia": "https://fr.wikipedia.org/wiki/Christ_R%C3%A9dempteur",
+    "googleMaps": "https://www.google.com/maps/place/Christ+R%C3%A9dempteur/@-22.951916,-43.2126799,17z"
+  },
+  {
+    "id": 7,
+    "name": "Le Taj Mahal",
+    "country": "Inde",
+    "category": "New7Wonders",
+    "lat": 27.1751,
+    "lng": 78.0421,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Taj_Mahal%2C_Agra%2C_India_edit3.jpg/1280px-Taj_Mahal%2C_Agra%2C_India_edit3.jpg",
+    "description": "Un mausolée de marbre blanc ivoire sur la rive sud de la rivière Yamuna à Agra.",
+    "wikipedia": "https://fr.wikipedia.org/wiki/Taj_Mahal",
+    "googleMaps": "https://www.google.com/maps/place/Taj+Mahal/@27.1751448,78.0395673,17z"
+  }
+]
