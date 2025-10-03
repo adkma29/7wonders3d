@@ -1,135 +1,295 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Globe from 'react-globe.gl';
 import * as THREE from 'three';
 import { WonderDetail } from './components/WonderDetail';
+import { LoadingScreen } from './components/LoadingScreen';
+import { Legend } from './components/Legend';
+import { SearchAndFilter } from './components/SearchAndFilter';
 
 interface Wonder {
   id: number;
-  name: string;
-  country: string;
-  category: string;
+  name?: string;
+  Name?: string;
+  NameFr?: string;
+  country?: string;
+  Country?: string;
+  CountryFr?: string;
+  category?: string;
+  Category?: string;
+  Type?: string;
+  TypeFr?: string;
+  displayCategory?: string;
+  icon?: string;
+  color?: string;
   lat: number;
   lng: number;
-  image: string;
-  description: string;
-  wikipedia: string;
-  googleMaps: string;
+  image?: string;
+  Image?: string;
+  description?: string;
+  Description?: string;
+  wikipedia?: string;
+  Wikipedia?: string;
+  googleMaps?: string;
+  'Google Maps'?: string;
 }
 
 function App() {
   const [wonders, setWonders] = useState<Wonder[]>([]);
+  const [filteredWonders, setFilteredWonders] = useState<Wonder[]>([]);
   const [selectedWonder, setSelectedWonder] = useState<Wonder | null>(null);
+  const [showLoading, setShowLoading] = useState(true);
+  const [showLegend, setShowLegend] = useState(false);
+  const [activeCategoryFilter, setActiveCategoryFilter] = useState<string | null>(null);
+  const globeRef = useRef<any>(null);
 
-  // Fonction pour créer des objets 3D personnalisés - Vraies étoiles à 5 branches
+  // 🌟 SYSTÈME DE FORMES GÉOMÉTRIQUES SIMPLES ET COLORÉES 🌟
+
+  // Obtenir la couleur selon la catégorie
+  const getCategoryColor = (wonder: Wonder): string => {
+    const category = wonder.displayCategory || wonder.Type || wonder.TypeFr || wonder.category;
+    switch (category) {
+      case 'Ancient': 
+      case 'Antique': return '#FFD700'; // Or - Merveilles antiques
+      case 'Medieval': 
+      case 'Médiéval': return '#8B4513'; // Marron - Merveilles médiévales
+      case 'Civil': return '#FF4444'; // Rouge - Ouvrages civils
+      case 'New7Wonders': 
+      case 'New7Wonders Foundation': 
+      case 'Nouvelles 7 Merveilles': return '#FF6B35'; // Orange - Nouvelles 7 merveilles
+      case 'Natural':
+      case 'Seven Natural Wonders of the World': 
+      case 'Naturel':
+      case 'Sept Merveilles Naturelles': return '#44FF44'; // Vert - Merveilles naturelles
+      case 'Industrial':
+      case 'Seven Wonders of the Industrial World': 
+      case 'Industriel':
+      case 'Sept Merveilles Industrielles': return '#666666'; // Gris - Merveilles industrielles
+      case 'USA Today':
+      case "USA Today's New Seven Wonders": 
+      case 'Nouvelles Sept Merveilles USA Today': return '#0066CC'; // Bleu - USA Today
+      default: return '#9966FF'; // Violet - Autres/Non catégorisées
+    }
+  };
+
+  // Créer une forme géométrique simple selon la catégorie
+  const createSimpleShape = (wonder: Wonder) => {
+    const color = getCategoryColor(wonder);
+    const category = wonder.displayCategory || wonder.Type || wonder.TypeFr || wonder.category;
+    
+    // Debug : vérifier les catégories
+    console.log(`Merveille: ${wonder.name || wonder.Name}, Catégorie: ${category}, Couleur: ${color}`);
+    
+    let geometry: THREE.BufferGeometry;
+    
+    // Forme selon la catégorie
+    switch (category) {
+      case 'Ancient':
+      case 'Antique':
+        // Pyramides (cônes) pour les merveilles antiques - OR
+        geometry = new THREE.ConeGeometry(0.5, 1.5, 4); // 4 faces = pyramide
+        break;
+      case 'Medieval':
+      case 'Médiéval':
+        // Tours (cylindres allongés) pour les merveilles médiévales - MARRON
+        geometry = new THREE.CylinderGeometry(0.3, 0.4, 1.8, 8);
+        break;
+      case 'Civil':
+        // Cubes pour les ouvrages civils - ROUGE
+        geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+        break;
+      case 'New7Wonders':
+      case 'New7Wonders Foundation':
+      case 'Nouvelles 7 Merveilles':
+        // Étoiles (cônes à 5 faces) pour les nouvelles 7 merveilles - ORANGE
+        geometry = new THREE.ConeGeometry(0.6, 1.2, 5);
+        break;
+      case 'Natural':
+      case 'Seven Natural Wonders of the World':
+      case 'Naturel':
+      case 'Sept Merveilles Naturelles':
+        // Sphères pour les merveilles naturelles - VERT
+        geometry = new THREE.SphereGeometry(0.6, 12, 8);
+        break;
+      case 'Industrial':
+      case 'Seven Wonders of the Industrial World':
+      case 'Industriel':
+      case 'Sept Merveilles Industrielles':
+        // Octaèdres pour les merveilles industrielles - GRIS
+        geometry = new THREE.OctahedronGeometry(0.7);
+        break;
+      case 'USA Today':
+      case "USA Today's New Seven Wonders":
+      case 'Nouvelles Sept Merveilles USA Today':
+        // Diamants (double pyramide) pour USA Today - BLEU
+        geometry = new THREE.ConeGeometry(0.5, 0.8, 6);
+        break;
+      default:
+        // Dodécaèdres pour les autres - VIOLET
+        console.log(`ATTENTION: Catégorie non reconnue pour ${wonder.name || wonder.Name}: ${category}`);
+        geometry = new THREE.DodecahedronGeometry(0.6);
+    }
+    
+    const material = new THREE.MeshLambertMaterial({
+      color: color,
+      emissive: color,
+      emissiveIntensity: 0.6 // Plus intense pour une meilleure visibilité
+    });
+    
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.y = 0.8; // Élever plus haut pour une meilleure visibilité
+    
+    return mesh;
+  };
+
   const createWonderObject = (obj: any) => {
     const wonder = obj as Wonder;
     
-    // Créer une vraie forme d'étoile avec des points personnalisés
-    const starShape = new THREE.Shape();
-    const outerRadius = 0.8;
-    const innerRadius = 0.3;
-    const spikes = 5;
+    console.log('🎨 Création d\'un objet 3D pour:', wonder.NameFr || wonder.Name);
     
-    // Dessiner la forme d'étoile
-    for (let i = 0; i < spikes * 2; i++) {
-      const angle = (i / (spikes * 2)) * Math.PI * 2;
-      const radius = i % 2 === 0 ? outerRadius : innerRadius;
-      const x = Math.cos(angle) * radius;
-      const y = Math.sin(angle) * radius;
-      
-      if (i === 0) {
-        starShape.moveTo(x, y);
-      } else {
-        starShape.lineTo(x, y);
-      }
-    }
-    starShape.closePath();
+    // 🌟 FORMES GÉOMÉTRIQUES SIMPLES ET COLORÉES 🌟
+    const shape = createSimpleShape(wonder);
     
-    // Extruder la forme pour créer une étoile 3D
-    const extrudeSettings = {
-      depth: 0.2,
-      bevelEnabled: true,
-      bevelThickness: 0.05,
-      bevelSize: 0.05,
-      bevelSegments: 8
+    // Animation simple de rotation
+    const animate = () => {
+      const time = Date.now() * 0.001;
+      shape.rotation.y = time;
+      requestAnimationFrame(animate);
     };
+    animate();
     
-    const starGeometry = new THREE.ExtrudeGeometry(starShape, extrudeSettings);
-    const starMaterial = new THREE.MeshLambertMaterial({
-      color: '#ffd700', // Jaune doré
-      emissive: '#333333',
-      transparent: true,
-      opacity: 0.9
-    });
-    
-    const star = new THREE.Mesh(starGeometry, starMaterial);
-    star.userData = wonder;
-    
-    // Incliner l'étoile davantage pour un angle plus dynamique
-    star.rotation.x = Math.PI / 3; // 60 degrés au lieu de 90
-    star.rotation.z = Math.PI / 6; // Ajout d'une rotation sur Z pour plus de dynamisme
-    
-    return star;
+    console.log('✅ Objet 3D créé avec succès');
+    return shape;
   };
 
   // Charger les données au montage du composant
   useEffect(() => {
     fetch('/data.json')
       .then(res => res.json())
-      .then(setWonders);
+      .then(data => {
+        console.log(`✅ ${data.length} merveilles chargées:`, data);
+        setWonders(data);
+        setFilteredWonders(data); // Initialiser avec toutes les merveilles
+      })
+      .catch(err => {
+        console.error('❌ Erreur lors du chargement des données:', err);
+      });
   }, []);
 
-  const handlePointClick = (wonder: Wonder) => {
-    setSelectedWonder(wonder);
+  // Masquer l'écran de chargement après 3 secondes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Gestionnaire de changement de filtres
+  const handleFilterChange = (filtered: Wonder[]) => {
+    setFilteredWonders(filtered);
+    console.log(`🔍 Filtrage: ${filtered.length}/${wonders.length} merveilles affichées`);
   };
 
+  // Gestionnaire de sélection de merveille depuis la recherche
+  const handleWonderSelect = (wonder: Wonder) => {
+    setSelectedWonder(wonder);
+    
+    // Zoom automatique vers la merveille sélectionnée
+    if (globeRef.current) {
+      globeRef.current.pointOfView({
+        lat: wonder.lat,
+        lng: wonder.lng,
+        altitude: 1.5
+      }, 1000);
+    }
+  };
+
+  // Gestionnaire de filtrage par catégorie depuis la légende
+  const handleCategoryFilter = (category: string) => {
+    if (activeCategoryFilter === category) {
+      // Si la même catégorie est cliquée, désactiver le filtre
+      setActiveCategoryFilter(null);
+      setFilteredWonders(wonders);
+    } else {
+      // Filtrer par la nouvelle catégorie
+      setActiveCategoryFilter(category);
+      const filtered = wonders.filter(wonder => {
+        const wonderCategory = wonder.displayCategory || wonder.Type;
+        return wonderCategory === category;
+      });
+      setFilteredWonders(filtered);
+      console.log(`🏛️ Filtrage par catégorie "${category}": ${filtered.length} merveilles`);
+    }
+  };
+
+  // Gestionnaire pour voir toutes les merveilles filtrées
+  const handleShowAllFiltered = () => {
+    if (filteredWonders.length > 0 && globeRef.current) {
+      // Calculer le centre géographique des merveilles filtrées
+      const avgLat = filteredWonders.reduce((sum, w) => sum + w.lat, 0) / filteredWonders.length;
+      const avgLng = filteredWonders.reduce((sum, w) => sum + w.lng, 0) / filteredWonders.length;
+      
+      // Zoomer vers le centre avec une altitude appropriée selon le nombre de merveilles
+      const altitude = Math.max(2, Math.min(4, filteredWonders.length / 10));
+      
+      globeRef.current.pointOfView({
+        lat: avgLat,
+        lng: avgLng,
+        altitude: altitude
+      }, 1500);
+      
+      console.log(`🌍 Vue d'ensemble de ${filteredWonders.length} merveilles`);
+    }
+  };
+
+  if (showLoading) {
+    return <LoadingScreen onStart={() => setShowLoading(false)} />;
+  }
+
+  console.log('🌍 Rendu du Globe avec', filteredWonders.length, 'merveilles visibles sur', wonders.length, 'total');
+
   return (
-    <main className="w-full h-screen bg-gray-900 text-white relative">
-      <header className="absolute top-0 left-0 w-full p-4 z-10 text-center pointer-events-none">
-        <h1 className="text-3xl font-bold">7 Wonders 3D</h1>
-        <p className="text-gray-400">Globe interactif des merveilles du monde</p>
-      </header>
-
-      <div className="absolute inset-0">
-        <Globe
-          // Texture du globe
-          globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-          bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
-          backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
-          
-          // Données pour les points avec objets 3D personnalisés
-          objectsData={wonders}
-          objectLat="lat"
-          objectLng="lng"
-          objectLabel={(obj: any) => {
-            const wonder = obj as Wonder;
-            return `
-              <div class="bg-gray-800 text-white p-3 rounded-lg shadow-lg border border-yellow-400">
-                <b class="text-yellow-400">${wonder.name}</b><br/>
-                <span class="text-gray-300">${wonder.country}</span>
-              </div>
-            `;
-          }}
-          objectThreeObject={createWonderObject}
-          objectAltitude={0.02}
-
-          // Gérer l'événement de clic sur les objets 3D
-          onObjectClick={handlePointClick as (point: object) => void}
-
-          // Options de contrôle
-          enablePointerInteraction={true}
-        />
+    <div className="h-screen w-screen bg-black overflow-hidden relative">
+      {/* Titre principal */}
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-30 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 drop-shadow-2xl">
+          ✨ 7 Wonders 3D ✨
+        </h1>
+        <p className="text-white mt-2 text-lg drop-shadow-lg">
+          Explorez les merveilles du monde en 3D
+        </p>
       </div>
 
-      <WonderDetail 
-        wonder={selectedWonder} 
-        onClose={() => setSelectedWonder(null)} 
+      <Globe
+        ref={globeRef}
+        globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+        backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
+        width={window.innerWidth}
+        height={window.innerHeight}
+        objectsData={filteredWonders}
+        objectThreeObject={createWonderObject}
+        onObjectClick={(obj) => setSelectedWonder(obj as Wonder)}
       />
-      
-      <footer className="absolute bottom-0 left-0 w-full p-2 z-10 text-center text-xs text-gray-500 pointer-events-none">
-        <p>Crédits : Données fusionnées (API World Wonders, Kaggle) | Images : Wikimedia Commons | Globe : NASA Blue Marble</p>
-      </footer>
-    </main>
+
+      <SearchAndFilter
+        wonders={wonders}
+        onFilterChange={handleFilterChange}
+        onWonderSelect={handleWonderSelect}
+        onShowAllFiltered={handleShowAllFiltered}
+      />
+
+      <Legend 
+        isVisible={showLegend}
+        onToggle={() => setShowLegend(!showLegend)}
+        onCategoryFilter={handleCategoryFilter}
+        activeCategoryFilter={activeCategoryFilter}
+      />
+
+      <WonderDetail
+        wonder={selectedWonder}
+        onClose={() => setSelectedWonder(null)}
+      />
+    </div>
   );
 }
 
