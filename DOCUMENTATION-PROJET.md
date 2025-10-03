@@ -236,4 +236,5 @@ Ce projet démontre la maîtrise de :
 
 *Documentation rédigée le 3 octobre 2025*  
 *Projet : 7Wonders 3D - Exploration Interactive des Merveilles du Monde*  
-*Développeur : [Votre Nom]*
+
+*Développeur : DIACOMA Alicia*
