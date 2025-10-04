@@ -175,15 +175,6 @@ function App() {
       });
   }, []);
 
-  // Masquer l'écran de chargement après 3 secondes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowLoading(false);
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   // Gestionnaire de changement de filtres
   const handleFilterChange = (filtered: Wonder[]) => {
     setFilteredWonders(filtered);

@@ -140,9 +140,19 @@ export function LoadingScreen({ onStart }: LoadingScreenProps) {
           <p className="text-sm text-gray-400 mb-2">
             🎯 Cliquez sur les formes géométriques • 🔍 Utilisez la recherche avancée • ℹ️ Explorez par catégories
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 mb-3">
             Projet développé avec React + Three.js + TypeScript
           </p>
+          
+          {/* Signature développeur */}
+          <div className="border-t border-white/10 pt-4">
+            <p className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+              by Alicia DIACOMA - BUT MMI 3
+            </p>
+            <p className="text-xs text-gray-600 mt-1">
+              🎓 Université de Nouvelle-Calédonie
+            </p>
+          </div>
         </div>
       </div>
     </div>
