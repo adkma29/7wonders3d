@@ -104,5 +104,6 @@
 
 ---
 
-**Application disponible sur** : http://localhost:5175/
+**Application disponible sur** : https://7wonders3d2025.netlify.app/
+
 **Toutes les fonctionnalités sont opérationnelles** ✅
